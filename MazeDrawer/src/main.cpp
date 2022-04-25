@@ -9,11 +9,15 @@ const int Bound = 50;
 sf::RectangleShape shapes[Bound * Bound];
 bool selected[Bound * Bound];
 int saveTillX = Bound - 1, saveTillY = Bound - 1;
+using Point = sf::Vector2i;
+
+std::vector<Point> Traverse(Point start, Point end);
 
 void SaveData();
 
 int main()
 {
+    sf::Vector2i lastMousePos = {-1, -1};
     for (int i = 0; i < Bound; i++)
     {
         for (int j = 0; j < Bound; j++)
@@ -37,6 +41,8 @@ int main()
     sf::Clock clk;
     ImVec2 windowPos;
     ImVec2 windowSize;
+    bool drawing = false;
+    bool removing = false;
     while (window.isOpen())
     {
         sf::Time dt = clk.restart();
@@ -81,28 +87,56 @@ int main()
                 view.setSize(window.getSize().x, window.getSize().y);
                 view.setCenter(window.getSize().x / 2.f, window.getSize().y / 2.0f);
             }
+            if (event.type == sf::Event::MouseButtonReleased)
+            {
+                drawing = false;
+                removing = false;
+                lastMousePos = {-1, -1};
+            }
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
+                drawing = true;
+            }
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right)
+            {
+                removing = true;
+            }
+        }
 
-                sf::FloatRect r1, r2;
-                r1.left = mousePos.x;
-                r1.top = mousePos.y;
-                r1.height = 2.0f;
-                r1.width = 2.0f;
-                r2.left = windowPos.x;
-                r2.top = windowPos.y;
-                r2.width = windowSize.x;
-                r2.height = windowSize.y;
-                if (r1.intersects(r2) == false)
+        if (drawing || removing)
+        {
+            sf::FloatRect r1, r2;
+            r1.left = mousePos.x;
+            r1.top = mousePos.y;
+            r1.height = 2.0f;
+            r1.width = 2.0f;
+            r2.left = windowPos.x;
+            r2.top = windowPos.y;
+            r2.width = windowSize.x;
+            r2.height = windowSize.y;
+            if (r1.intersects(r2) == false)
+            {
+                if (x >= 0 && y >= 0 && x <= maxIndex_X && y <= maxIndex_Y)
                 {
-
-                    if (x >= 0 && y >= 0 && x <= maxIndex_X && y <= maxIndex_Y)
+                    std::vector<sf::Vector2i> path;
+                    if (lastMousePos.x != -1)
                     {
-                        int index = x * Bound + y;
-                        selected[index] = !selected[index];
+                        path = Traverse(sf::Vector2i(x, y), lastMousePos);
+                    }
+                    else
+                    {
+                        path.push_back(sf::Vector2i(x, y));
+                    }
+
+                    for (int i = 0; i < path.size(); i++)
+                    {
+                        int index = path[i].x * Bound + path[i].y;
+                        selected[index] = (drawing && !removing);
                     }
                 }
             }
+
+            lastMousePos = sf::Vector2i(x, y);
         }
 
         window.clear(sf::Color(136, 135, 85, 255));
@@ -124,7 +158,6 @@ int main()
         ImGui::SFML::Render(window);
         window.display();
     }
-
 
     ImGui::SFML::Shutdown();
     return 0;
@@ -181,4 +214,81 @@ void SaveData()
         output << '\n';
     }
     output.close();
+}
+
+std::vector<Point> Low(Point start, Point end)
+{
+    std::vector<Point> output;
+    int dx = end.x - start.x;
+    int dy = end.y - start.y;
+    int yi = 1;
+    if (dy < 0)
+    {
+        yi = -1;
+        dy = -dy;
+    }
+    int D = (2 * dy) - dx;
+    int y = start.y;
+    for (int x = start.x; x <= end.x; x++)
+    {
+        output.push_back({x, y});
+        if (D > 0)
+        {
+            y = y + yi;
+            D = D + (2 * (dy - dx));
+        }
+        else
+        {
+            D = D + 2 * dy;
+        }
+    }
+    return output;
+}
+
+std::vector<Point> High(Point start, Point end)
+{
+
+    std::vector<Point> output;
+    int dx = end.x - start.x;
+    int dy = end.y - start.y;
+    int xi = 1;
+    if (dy < 0)
+    {
+        xi = -1;
+        dx = -dx;
+    }
+    int D = (2 * dx) - dy;
+    int x = start.x;
+    for (int y = start.y; y <= end.y; y++)
+    {
+        output.push_back({x, y});
+        if (D > 0)
+        {
+            x = x + xi;
+            D = D + (2 * (dx - dy));
+        }
+        else
+        {
+            D = D + 2 * dx;
+        }
+    }
+    return output;
+}
+
+std::vector<Point> Traverse(Point start, Point end)
+{
+    if (std::abs(end.y - start.y) < std::abs(end.x - start.x))
+    {
+        if (start.x > end.x)
+            return Low(end, start);
+        else
+            return Low(start, end);
+    }
+    else
+    {
+        if (start.y > end.y)
+            return High(end, start);
+        else
+            return High(start, end);
+    }
 }
