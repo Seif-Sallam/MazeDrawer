@@ -1,0 +1,54 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended'
+cd MazeDrawer && make -s all
+make[1]: Entering directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer'
+mkdir -p ./Build/ ./Objs/
+cd ./Thirdparty/imgui && make -s all
+make[2]: Entering directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer/Thirdparty/imgui'
+mkdir -p ./BuildLib/ ./BuildLib/Objs/ ./BuildLib/Objs/
+printf '[31mCompiling ImGui to a static library\n(B[m'
+make -s ./BuildLib/
+make[3]: Entering directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer/Thirdparty/imgui'
+printf '[1m========== Compiling [31mimgui_draw.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui_draw.cpp -o BuildLib/Objs/imgui_draw.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mimgui_widgets.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui_widgets.cpp -o BuildLib/Objs/imgui_widgets.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mimgui-SFML.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui-SFML.cpp -o BuildLib/Objs/imgui-SFML.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mimgui_tables.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui_tables.cpp -o BuildLib/Objs/imgui_tables.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mimgui.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui.cpp -o BuildLib/Objs/imgui.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mimgui_demo.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./ -std=c++17 imgui_demo.cpp -o BuildLib/Objs/imgui_demo.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+ar rvs ./BuildLib/libimgui.so  ./BuildLib/Objs/imgui_draw.o  ./BuildLib/Objs/imgui_widgets.o  ./BuildLib/Objs/imgui-SFML.o  ./BuildLib/Objs/imgui_tables.o  ./BuildLib/Objs/imgui.o  ./BuildLib/Objs/imgui_demo.o
+make[3]: Leaving directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer/Thirdparty/imgui'
+printf '[32mSuccessfully Created libimgui.so\n\n(B[m'
+make[2]: Leaving directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer/Thirdparty/imgui'
+printf '[31mCompiling and Linking the created objects\n(B[m'
+make -s ./Build/MazeDrawer.out
+make[2]: Entering directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer'
+printf '[1m========== Compiling [31mApplication.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./headers/ -I./Thirdparty/imgui/ -std=c++17 src/Application.cpp -o Objs/Application.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mCell.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./headers/ -I./Thirdparty/imgui/ -std=c++17 src/Cell.cpp -o Objs/Cell.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mFunctions.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./headers/ -I./Thirdparty/imgui/ -std=c++17 src/Functions.cpp -o Objs/Functions.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+printf '[1m========== Compiling [31mmain.cpp(B[m[1m ======\n(B[m'
+g++ -c -I./headers/ -I./Thirdparty/imgui/ -std=c++17 src/main.cpp -o Objs/main.o
+printf '[32m========== Compiled Successfully ======\n(B[m'
+g++ -I./headers/ -I./Thirdparty/imgui/ -std=c++17  ./Objs/Application.o  ./Objs/Cell.o  ./Objs/Functions.o  ./Objs/main.o -o ./Build/MazeDrawer.out -L./Thirdparty/imgui/BuildLib -limgui -lGL -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+make[2]: Leaving directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer'
+printf '[32mCreated binary file ./Build/MazeDrawer.out\n\n(B[m'
+make[1]: Leaving directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended/MazeDrawer'
+make: Leaving directory '/media/seif-sallam/HDD/Visual studio/repos/MazeDrawerExtended'
+ 

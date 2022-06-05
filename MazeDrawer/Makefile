@@ -9,9 +9,8 @@ HEADERS_DIR:= ./headers/
 SRC_DIR:= ./src/
 
 LIBS:= -limgui -lGL -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-SFML_DIR= ./Thirdparty/SFMLLinux/
 IMGUI_DIR= ./Thirdparty/imgui/
-LIBS_INC= -L$(SFML_DIR)lib/ -L$(IMGUI_DIR)BuildLib
+LIBS_INC= -L$(IMGUI_DIR)BuildLib
 
 SFML_INC= ./Thirdparty/SFML/include/
 
