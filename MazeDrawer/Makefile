@@ -10,7 +10,8 @@ SRC_DIR:= ./src/
 
 LIBS:= -limgui -lGL -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 IMGUI_DIR= ./Thirdparty/imgui/
-LIBS_INC= -L$(IMGUI_DIR)BuildLib
+SFML_DIR= ./Thirdparty/SFML/
+LIBS_INC= -L$(IMGUI_DIR)BuildLib -L$(SFML_DIR)/lib
 
 SFML_INC= ./Thirdparty/SFML/include/
 
@@ -24,6 +25,7 @@ SOURCES:= $(shell find $(SRC_DIR) -name  '*.cpp')
 HEADERS_DIRS:=$(sort $(dir $(shell find $(HEADERS_DIR) -name '*.h')))
 
 INC= $(addprefix -I, $(HEADERS_DIRS))
+INC+= -I$(SFML_INC)
 INC+= -I$(IMGUI_DIR)
 CCFLAGS= $(INC) -std=c++17
 OBJECTS:= $(patsubst %.cpp, %.o, $(subst ./src/, ./Objs/, $(SOURCES)))
