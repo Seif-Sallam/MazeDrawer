@@ -49,4 +49,5 @@ private:
     sf::Font m_Font;
     bool m_ShowText;
     sf::Vector2i m_SaveUntil;
+    std::string m_CurrentCat = "DEFAULT";
 };

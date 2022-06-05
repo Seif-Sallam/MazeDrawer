@@ -119,6 +119,7 @@ void Application::Update(const sf::Time &time)
                     m_Cells[index].selected = (m_Drawing && !m_Removing);
                     if (m_Cells[index].selected)
                     {
+                        m_Cells[index].category = m_CurrentCat;
                         m_Cells[index].value = m_Categories[m_Cells[index].category].second; // the value of the the cat
                     }
                 }
@@ -179,16 +180,55 @@ void Application::ImGuiLayer()
 void Application::DrawTable()
 {
     ImGui::Separator();
+    static char inputName[1024] = "";
+    static int value = 1;
+    static float clr[3] = {0.0, 0.0, 0.0};
+    ImGui::InputText("Title", inputName, sizeof(inputName));
+    ImGui::SliderInt("Value", &value, -100, 100);
+    ImGui::ColorEdit3("Color", clr);
+    if (ImGui::Button("Add Category"))
+    {
+        bool flag = false;
+        for (auto &cat : m_Categories)
+        {
+            if (cat.first == inputName || cat.second.second == value)
+            {
+                flag = true;
+                break;
+            }
+        }
+        if (flag == true)
+        {
+            // Pop up (TO BE CREATED LATER)
+        }
+        else
+        {
+            m_Categories[inputName] = {sf::Color(clr[0] * 255, clr[1] * 255, clr[2] * 255, 255), value};
+            m_CurrentCat = inputName;
+        }
+        value++;
+        clr[0] = 0;
+        clr[1] = 0;
+        clr[2] = 0;
+    }
 
     ImGui::BeginChild("Category Table");
     HelpMarker("The category with the value 0 is a one that will be atteded incrementally in the output file.\n"
                "i.e. it will printed in the output file 1 2 3 4 5 and so on\n");
-    ImGui::Columns(2, "Available Categories");
+    ImGui::Columns(3, "Available Categories");
+
+    static int selection = 0;
+    int ind = 0;
     for (auto &cat : m_Categories)
     {
         ImGui::Text("%s", cat.first.c_str());
         ImGui::NextColumn();
         ImGui::Text("%d", cat.second.second);
+        ImGui::NextColumn();
+        if (ImGui::RadioButton(("###" + std::to_string(ind)).c_str(), &selection, ind++))
+        {
+            m_CurrentCat = cat.first;
+        }
         ImGui::NextColumn();
         ImGui::Separator();
     }
