@@ -1,5 +1,5 @@
 # Maze Drawing Tool
-The master branch compiles and runs on Linux distributions and Windows.
+The master branch compiles and runs on Linux distributions and Windows. (OSX not tested on)
 
 ## To run the project
 
@@ -13,3 +13,14 @@ The master branch compiles and runs on Linux distributions and Windows.
     
 ### If you have any problems
   If you have any problems, or want to add any more features, please contact me on [seif_sallam@aucegypt.edu](mailto:seif_sallam@aucegypt.edu).
+
+
+## Images
+
+### You can add differnet categories
+
+<img src="images/NoNumbers.png"/>
+ 
+
+### You can also show the numbers in each category
+<img src="images/Numbers.png"/>
