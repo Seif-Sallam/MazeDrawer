@@ -15,7 +15,6 @@ class Application
 public:
     Application();
     void Run();
-    static sf::RenderWindow *GetWindow();
     ~Application();
 
 private:
@@ -32,12 +31,12 @@ private:
     void CreatePopUp(bool &opened, std::string_view title = "PopupMessage", std::string_view message = "Some Message");
     void EndImGuiWindow();
     void StartImGuiFrame();
+    void RewriteCells(int x = 1, int y = 1);
 
 private:
-    static sf::RenderWindow *m_Window;
+    sf::RenderWindow *m_Window;
     std::list<sf::FloatRect> m_ImGuiWindowRects;
-    std::unordered_map<std::string, sf::Color> m_ClrMap;
-    std::vector<std::pair<std::string, int32_t>> m_Cateogries;
+    std::unordered_map<std::string, std::pair<sf::Color, int32_t>> m_Categories;
 
     std::vector<Cell> m_Cells;
     sf::Vector2i m_LastMousePos = {-1, -1};

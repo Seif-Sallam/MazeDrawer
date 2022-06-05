@@ -166,5 +166,5 @@ void PrintNegativeNumber(int value, std::ofstream &outputFile, int32_t padding)
     outputFile << '-';
     for (int i = 0; i < padding - c - 1; i++)
         outputFile << '0';
-    outputFile << value;
+    outputFile << absValue;
 }

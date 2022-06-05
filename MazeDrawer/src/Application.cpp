@@ -1,13 +1,8 @@
 #include "Application.h"
 #include "Functions.h"
 #include "Cell.h"
-
-sf::RenderWindow *Application::m_Window = nullptr;
-
-sf::RenderWindow *Application::GetWindow()
-{
-    return m_Window;
-}
+#include <cmath>
+int count = 0;
 
 Application::Application()
 {
@@ -21,15 +16,23 @@ Application::Application()
 
     m_Font.loadFromFile("rsc/ProggyClean.ttf");
     m_Text.setFont(m_Font);
-
-    m_Cells.resize(40 * 40);
-    m_NumberOfCells = 40 * 40;
-
-    m_Cateogries.emplace_back("DEFAULT", -1);
-
-    m_ClrMap["DEFAULT"] = sf::Color(25, 165, 25, 255);
-
     m_Scale = {32.0f, 32.0f};
+
+    m_NumberOfCells = std::ceil(m_View.getSize().x / m_Scale.x);
+    m_Cells.resize(m_NumberOfCells * m_NumberOfCells);
+
+    m_ShowText = true;
+    m_Categories["DEFAULT"] = {sf::Color(25, 165, 25, 255), -1};
+
+    m_SaveUntil = {42, 22};
+    int v = 0;
+    for (int i = 0; i < m_NumberOfCells; i++)
+        for (int j = 0; j < m_NumberOfCells; j++)
+        {
+            int32_t index = j * m_NumberOfCells + i;
+            m_Cells[index].value = v;
+            v++;
+        }
 }
 
 Application::~Application()
@@ -46,10 +49,12 @@ void Application::Run()
     {
         auto dt = m_Clk.restart();
         ProcessEevnts();
+
         Update(dt);
 
         ImGui::SFML::Update(*m_Window, dt);
         StartImGuiFrame();
+
         ImGuiLayer();
 
         Render();
@@ -106,11 +111,19 @@ void Application::Update(const sf::Time &time)
                 else
                     path.push_back(sf::Vector2i(x, y));
 
+                int count = 0;
                 for (auto &v : path)
                 {
+                    count++;
                     int32_t index = v.x * m_NumberOfCells + v.y;
                     m_Cells[index].selected = (m_Drawing && !m_Removing);
+                    if (m_Cells[index].selected)
+                    {
+                        m_Cells[index].value = m_Categories[m_Cells[index].category].second; // the value of the the cat
+                    }
                 }
+                // if (count >= 1)
+                RewriteCells(m_SaveUntil.x, m_SaveUntil.y);
             }
         }
 
@@ -123,6 +136,7 @@ void Application::ImGuiLayer()
     auto [x, y] = GetMousePositionInt(m_Window, m_Scale);
     if (CreateImGuiWindow("TestWindow"))
     {
+        static int oldValueX, oldValueY;
         ImGui::TextUnformatted("Till which index do you want to save?");
         ImGui::TextUnformatted("x:");
         ImGui::SameLine();
@@ -137,20 +151,59 @@ void Application::ImGuiLayer()
         {
             SaveData(m_SaveUntil, m_NumberOfCells, m_Cells);
         }
+        if (oldValueX != m_SaveUntil.x || oldValueY != m_SaveUntil.y)
+        {
+            RewriteCells(m_SaveUntil.x, m_SaveUntil.y);
+            oldValueX = m_SaveUntil.x;
+            oldValueY = m_SaveUntil.y;
+        }
+        ImGui::Checkbox("Show Numbers", &m_ShowText);
+        if (ImGui::Button("Clear All"))
+        {
+            for (int i = 0; i <= m_SaveUntil.y; i++)
+            {
+                for (int j = 0; j <= m_SaveUntil.x; j++)
+                {
+                    int index = j * m_NumberOfCells + i;
+                    m_Cells[index].selected = false;
+                }
+            }
+            RewriteCells(m_SaveUntil.x, m_SaveUntil.y);
+        }
+
+        DrawTable();
         EndImGuiWindow();
     }
 }
 
+void Application::DrawTable()
+{
+    ImGui::Separator();
+
+    ImGui::BeginChild("Category Table");
+    HelpMarker("The category with the value 0 is a one that will be atteded incrementally in the output file.\n"
+               "i.e. it will printed in the output file 1 2 3 4 5 and so on\n");
+    ImGui::Columns(2, "Available Categories");
+    for (auto &cat : m_Categories)
+    {
+        ImGui::Text("%s", cat.first.c_str());
+        ImGui::NextColumn();
+        ImGui::Text("%d", cat.second.second);
+        ImGui::NextColumn();
+        ImGui::Separator();
+    }
+    ImGui::EndChild();
+}
+
 void Application::Render()
 {
-    int32_t maxIndex_X = std::min(m_NumberOfCells, int32_t(m_View.getSize().x / 32.0f));
-    int32_t maxIndex_Y = std::min(m_NumberOfCells, int32_t(m_View.getSize().y / 32.0f));
+    int32_t maxIndex_X = std::min(m_SaveUntil.x, int32_t(m_View.getSize().x / 32.0f));
+    int32_t maxIndex_Y = std::min(m_SaveUntil.y, int32_t(m_View.getSize().y / 32.0f));
     m_Window->clear(sf::Color(136, 135, 85, 255));
     m_Window->setView(m_View);
     sf::RectangleShape shape(m_Scale + sf::Vector2f(-1.0f, -1.0f));
     shape.setOutlineThickness(1.0f);
     shape.setOutlineColor(sf::Color(245, 245, 245));
-
     sf::Text *txtPtr = (m_ShowText) ? &m_Text : nullptr;
 
     for (int32_t i = 0; i <= maxIndex_X; i++)
@@ -158,14 +211,13 @@ void Application::Render()
         for (int32_t j = 0; j <= maxIndex_Y; j++)
         {
             int32_t index = i * m_NumberOfCells + j;
-
+            shape.setPosition(i * m_Scale.x, j * m_Scale.y);
             sf::Color clr = sf::Color(68, 68, 68);
             if (m_Cells[index].selected)
                 clr = GetClrFromMap(m_Cells[index].category);
             m_Cells[index].Draw(shape, m_Scale, *m_Window, txtPtr, clr);
         }
     }
-
     ImGui::SFML::Render(*m_Window);
     m_Window->display();
 }
@@ -182,30 +234,12 @@ bool Application::IntersectsWithImGuiWindows(const sf::FloatRect &rect)
 
 sf::Color Application::GetClrFromMap(const std::string &category)
 {
-    auto it = m_ClrMap.begin();
-    if ((it = m_ClrMap.find(category)) == m_ClrMap.end())
+    auto it = m_Categories.begin();
+    if ((it = m_Categories.find(category)) == m_Categories.end())
         return sf::Color::Blue;
 
-    return it->second;
+    return it->second.first;
 }
-
-void Application::DrawTable()
-{
-    ImGui::BeginChild("Category Table");
-    HelpMarker("The category with the value 0 is a one that will be atteded incrementally in the output file.\n"
-               "i.e. it will printed in the output file 1 2 3 4 5 and so on\n");
-    ImGui::Columns(2, "Available Categories");
-    for (uint32_t i = 0; i < m_Cateogries.size(); i++)
-    {
-        ImGui::Text("%s", m_Cateogries[i].first.c_str());
-        ImGui::NextColumn();
-        ImGui::Text("%ld", m_Cateogries[i].second);
-        ImGui::NextColumn();
-        ImGui::Separator();
-    }
-    ImGui::EndChild();
-}
-
 bool Application::CreateImGuiWindow(std::string_view title, bool *p_open, ImGuiWindowFlags windowFlags)
 {
     return ImGui::Begin(title.data(), p_open, windowFlags);
@@ -247,4 +281,18 @@ void Application::CreatePopUp(bool &opened, std::string_view title, std::string_
 void Application::StartImGuiFrame()
 {
     m_ImGuiWindowRects.clear();
+}
+void Application::RewriteCells(int x, int y)
+{
+    int v = 0;
+    for (int i = 0; i <= y; i++)
+        for (int j = 0; j <= x; j++)
+        {
+            int32_t index = j * m_NumberOfCells + i;
+            if (m_Cells[index].selected == false)
+            {
+                m_Cells[index].value = v;
+                v++;
+            }
+        }
 }

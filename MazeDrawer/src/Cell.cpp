@@ -8,10 +8,10 @@ void Cell::Draw(sf::RectangleShape &shape, const sf::Vector2f &cellSize, sf::Ren
         shape.setFillColor(clr);
 
     target.draw(shape);
-    DrawText(txtptr, cellSize, target, clr);
+    DrawText(txtptr, shape.getPosition(), cellSize, target, clr);
 }
 
-void Cell::DrawText(sf::Text *txtptr, const sf::Vector2f &cellSize, sf::RenderTarget &target, sf::Color clr)
+void Cell::DrawText(sf::Text *txtptr, const sf::Vector2f &position, const sf::Vector2f &cellSize, sf::RenderTarget &target, sf::Color clr)
 {
     if (txtptr)
     {
@@ -19,8 +19,8 @@ void Cell::DrawText(sf::Text *txtptr, const sf::Vector2f &cellSize, sf::RenderTa
             txtptr->setFillColor(sf::Color::White);
         else
             txtptr->setFillColor(sf::Color::Black);
-        txtptr->setCharacterSize(cellSize.x - 5);
-        txtptr->setPosition(position.x * cellSize.x, position.y * cellSize.y);
+        txtptr->setCharacterSize(cellSize.x - 10);
+        txtptr->setPosition(position);
         txtptr->setString(std::to_string(value));
         target.draw(*txtptr);
     }
