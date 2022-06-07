@@ -17,6 +17,7 @@ project "MazeDrawer"
     includedirs {
         "$(ProjectDir)Thirdparty/imgui/",
         "$(ProjectDir)Thirdparty/SFML/include/",
+        "headers/",
     }
     libdirs {
         "$(ProjectDir)Thirdparty/SFML/lib/"
