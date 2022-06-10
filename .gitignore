@@ -16,3 +16,4 @@ Objs/
 BuildLib/
 .vscode/*
 SFMLLinux/**
+obj/
