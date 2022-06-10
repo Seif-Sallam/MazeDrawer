@@ -15,3 +15,4 @@ Build/
 Objs/
 BuildLib/
 .vscode/*
+SFMLLinux/**

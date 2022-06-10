@@ -1,4 +1,4 @@
-workspace " MazeDrawer"  
+workspace "MazeDrawer"  
     configurations { "Debug", "Release" } 
 
     architecture "x86_64"
