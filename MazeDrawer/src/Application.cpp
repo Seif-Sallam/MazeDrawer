@@ -220,10 +220,10 @@ void Application::DrawTable()
 {
 	ImGui::Separator();
 	static char inputName[1024] = "";
-	static int value = 1;
+	static int value = -1;
 	static float clr[3] = {0.0, 0.0, 0.0};
 	ImGui::InputText("Title", inputName, sizeof(inputName));
-	ImGui::SliderInt("Value", &value, -100, 100);
+	ImGui::SliderInt("Value", &value, -100, -1);
 	ImGui::ColorEdit3("Color", clr);
 	if (ImGui::Button("Add Category"))
 	{
