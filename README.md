@@ -1,5 +1,7 @@
 # Maze Drawing Tool
-The master branch compiles and runs on Linux distributions and Windows. (OSX not tested on)
+The master branch compiles and runs on Linux distributions and Windows. (OSX not tested on).
+
+You can save the map you created and load it later to further update it again.
 
 ## To run the project
 
