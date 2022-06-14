@@ -9,7 +9,7 @@ SRC_DIR:= ./
 
 OUTPUT:= libimgui.so
 BUILD_DIR = ./BuildLib/
-SOURCES:= $(wildcard *.cpp)
+SOURCES:= $(shell find $(SRC_DIR) -name  '*.cpp')
 OBJECTS:= $(patsubst %.cpp, %.o, $(addprefix $(BUILD_DIR)Objs/, $(SOURCES)))
 OBJECTS_DIR=./Objs
 DIRS = $(BUILD_DIR) $(BUILD_DIR)Objs/ $(sort $(dir $(OBJECTS)))

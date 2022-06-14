@@ -13,7 +13,7 @@
 using Point = sf::Vector2i;
 struct Cell;
 
-void SaveData(sf::Vector2i saveUntil, int32_t bound, const std::vector<Cell> &cells);
+void SaveData(const std::string &filePath, sf::Vector2i saveUntil, int32_t bound, const std::vector<Cell> &cells);
 
 std::list<Point> Traverse(Point start, Point end);
 

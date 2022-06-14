@@ -81,18 +81,18 @@ std::list<Point> Traverse(Point start, Point end)
     }
 }
 
-void SaveData(sf::Vector2i saveUntil, int32_t mazeSize, const std::vector<Cell> &cells)
+void SaveData(const std::string &filePath, sf::Vector2i saveUntil, int32_t mazeSize, const std::vector<Cell> &cells)
 {
     int32_t saveTillX = saveUntil.x;
     int32_t saveTillY = saveUntil.y;
-    std::ofstream output("output.txt");
+    std::ofstream output(filePath);
     int counter = 0;
     int c = 0;
     for (int i = 0; i <= saveTillX; i++)
     {
         for (int j = 0; j <= saveTillY; j++)
         {
-            int index = i * mazeSize + j;
+            int index = i + j * mazeSize;
             if (!cells[index].selected)
                 c++;
         }
@@ -104,7 +104,7 @@ void SaveData(sf::Vector2i saveUntil, int32_t mazeSize, const std::vector<Cell> 
     {
         for (int j = 0; j <= saveTillY; j++)
         {
-            int index = i * mazeSize + j;
+            int index = j * mazeSize + i;
             if (cells[index].selected)
             {
                 PrintNegativeNumber(cells[index].value, output, numOfPaddings);

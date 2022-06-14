@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include <list>
 #include <string_view>
+#include <map>
+#include <sstream>
 
 struct Cell;
 
@@ -33,6 +35,9 @@ private:
     void StartImGuiFrame();
     void RewriteCells(int x = 1, int y = 1);
 
+    void LoadMap(const std::vector<std::vector<int32_t>> &map, const std::map<int32_t, std::string> catMap);
+    void LoadMap(const std::string &filePath);
+
 private:
     sf::RenderWindow *m_Window;
     std::list<sf::FloatRect> m_ImGuiWindowRects;
@@ -50,4 +55,5 @@ private:
     bool m_ShowText;
     sf::Vector2i m_SaveUntil;
     std::string m_CurrentCat = "DEFAULT";
+    char m_FileName[1024] = "output";
 };
