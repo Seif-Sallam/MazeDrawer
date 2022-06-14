@@ -10,7 +10,7 @@ project "MazeDrawer"
     files{
         "headers/**.h",
         "src/**.cpp",
-        "Thirdparty/imgui/**.cpp"
+        "Thirdparty/imgui/**.cpp",
         "Thirdparty/imgui/ImGuiDialog/**.cpp"
     }
     defines {"SFML_STATIC",
