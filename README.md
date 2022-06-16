@@ -19,8 +19,8 @@ The master branch compiles and runs on Linux distributions and Windows. (OSX not
 
 ### You can add differnet categories
 
-<img src="images/NoNumbers.png"/>
+<img src="images/No_Numbers.jpeg"/>
  
 
 ### You can also show the numbers in each category
-<img src="images/Numbers.png"/>
+<img src="images/Numbers.jpeg"/>
